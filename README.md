@@ -452,6 +452,7 @@ plt.show()
 ```
 <img src="Images/image7.png" width="400" style="display: block; margin: 0 auto;">
 <p style='text-align: center; font-style: italic; color: #7f8c8d;'>
+ 
  ## Recommandations commerciales basées sur l'analyse COVID-19
  
  ### 1. Renforcer la surveillance dans les pays à risque élevé
