@@ -211,7 +211,7 @@ plt.ylabel("Nombre de cas")
 plt.xticks(rotation=45)
 plt.show()
 ```
-<img src="Data/Images/image2.png" width="400" style="display: block; margin: 0 auto;">
+<img src="Images/image2.png" width="400" style="display: block; margin: 0 auto;">
 <p style='text-align: center; font-style: italic; color: #7f8c8d;'>
 </p>
 
@@ -232,7 +232,7 @@ plt.ylabel("Nombre de décès")
 plt.xticks(rotation=45)
 plt.show()
 ```
-<img src="Data/Images/image2.png" width="400" style="display: block; margin: 0 auto;">
+<img src="Images/image2.png" width="400" style="display: block; margin: 0 auto;">
 <p style='text-align: center; font-style: italic; color: #7f8c8d;'>
 </p>
 
