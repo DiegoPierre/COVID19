@@ -323,6 +323,7 @@ plt.show()
 <img src="Images/image4.png" width="400" style="display: block; margin: 0 auto;">
 <p style='text-align: center; font-style: italic; color: #7f8c8d;'>
 </p>
+
 ### Modèle Random Forest simple
 
 On entraîne un modèle **Random Forest** pour prédire la variable cible `Haut_Risque` à partir des colonnes `New_cases` et `New_deaths`.
