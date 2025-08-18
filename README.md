@@ -237,6 +237,33 @@ plt.show()
 </p>
 
 
+### Visualisation des vagues épidémiques au fil du temps  
+
+Dans cette étape, on représente graphiquement l’évolution du nombre de cas et de décès dans un pays donné, afin d’identifier les vagues épidémiques.  
+Nous choisissons ici la **France** comme exemple.  
+
+```python
+plt.figure(figsize=(14,6))
+# Exemple pour un pays spécifique, par ex. "France"
+country = "France"
+df_country = df[df['Country']==country]
+
+# Tracer les cas et décès au fil du temps
+sns.lineplot(x='Date_reported', y='New_cases', data=df_country, label='Cas')
+sns.lineplot(x='Date_reported', y='New_deaths', data=df_country, label='Décès')
+
+# Personnalisation du graphique
+plt.title(f"Vagues épidémiques au fil du temps - {country}")
+plt.xlabel("Date")
+plt.ylabel("Nombre quotidien")
+plt.legend()
+plt.show()
+```
+<img src="Images/image3.png" width="400" style="display: block; margin: 0 auto;">
+<p style='text-align: center; font-style: italic; color: #7f8c8d;'>
+</p>
+
+
 ### Préparation des données pour Machine Learning  
 
 Avant d’entraîner nos modèles, nous devons préparer correctement les données :  
