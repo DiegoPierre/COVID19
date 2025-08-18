@@ -289,3 +289,167 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 print("Données prêtes pour le ML")
 ```
+### Régression Logistique  
+
+Nous utilisons ici une **pipeline** combinant la normalisation des données et un classificateur de **régression logistique**.  
+Un `GridSearchCV` permet de trouver le meilleur hyperparamètre `C` grâce à une validation croisée (cv=3).  
+
+```python
+# Pipeline + GridSearch pour Logistic Regression
+pipe_lr = Pipeline([
+    ("scaler", StandardScaler()),
+    ("clf", LogisticRegression(max_iter=1000, class_weight="balanced", random_state=42))
+])
+
+# Paramètres à tester
+param_lr = {"clf__C": [0.1, 1, 3]}
+
+# GridSearch avec validation croisée
+grid_lr = GridSearchCV(pipe_lr, param_lr, scoring="f1", cv=3, n_jobs=-1)
+grid_lr.fit(X_train, y_train)
+
+# Prédiction
+y_pred_lr = grid_lr.predict(X_test)
+
+# Évaluation
+print("=== Régression Logistique ===")
+print(classification_report(y_test, y_pred_lr))
+
+# Matrice de confusion
+sns.heatmap(confusion_matrix(y_test, y_pred_lr), annot=True, fmt="d", cmap="Blues")
+plt.title("Matrice de confusion - Régression Logistique")
+plt.show()
+```
+<img src="Images/image4.png" width="400" style="display: block; margin: 0 auto;">
+<p style='text-align: center; font-style: italic; color: #7f8c8d;'>
+</p>
+### Modèle Random Forest simple
+
+On entraîne un modèle **Random Forest** pour prédire la variable cible `Haut_Risque` à partir des colonnes `New_cases` et `New_deaths`.
+
+```python
+# --- Modèle Random Forest simple ---
+rf = RandomForestClassifier(
+    n_estimators=300,          # Nombre d'arbres dans la forêt
+    max_depth=None,            # Profondeur maximale des arbres
+    min_samples_split=2,       # Nombre minimum d'échantillons pour diviser un noeud
+    min_samples_leaf=1,        # Nombre minimum d'échantillons dans une feuille
+    random_state=42,
+    n_jobs=-1                  # Utilisation de tous les cœurs pour l'entraînement
+)
+
+# Entraînement
+rf.fit(X_train, y_train)
+
+# Prédiction
+y_pred_rf = rf.predict(X_test)
+
+# Évaluation
+print("=== Forêt Aléatoire simple ===")
+print(classification_report(y_test, y_pred_rf))
+
+# Matrice de confusion
+sns.heatmap(confusion_matrix(y_test, y_pred_rf), annot=True, fmt="d", cmap="Greens")
+plt.title("Matrice de confusion - Forêt Aléatoire")
+plt.show()
+```
+<img src="Images/image5.png" width="400" style="display: block; margin: 0 auto;">
+<p style='text-align: center; font-style: italic; color: #7f8c8d;'>
+</p>
+
+### Exemple minimal : Random Forest avec GridSearchCV
+
+Nous allons entraîner un modèle **Random Forest** sur un petit jeu de données fictif pour prédire la variable `Haut_Risque`.
+
+```python
+# 2. Exemple de dataframe minimal
+df = pd.DataFrame({
+    "New_cases": [10, 20, 30, 40, 50, 60, 70, 80],
+    "New_deaths": [1, 2, 3, 4, 5, 6, 7, 8],
+    "Haut_Risque": [0,0,1,1,0,1,0,1]
+})
+
+# 3. Préparation des features et target
+features = ["New_cases", "New_deaths"]
+X = df[features].fillna(0)  # Remplacer les valeurs manquantes par 0
+y = df["Haut_Risque"]
+
+# 4. Normalisation et séparation train/test
+X_scaled = StandardScaler().fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, shuffle=False)
+
+# 5. Définition des hyperparamètres pour GridSearch
+param_rf = {
+    "n_estimators": [100, 200],       # Nombre d'arbres
+    "max_depth": [None, 10, 20],      # Profondeur maximale
+    "min_samples_split": [2, 5],      # Minimum d'échantillons pour diviser un noeud
+    "min_samples_leaf": [1, 2]        # Minimum d'échantillons dans une feuille
+}
+
+# 6. GridSearchCV pour trouver la meilleure combinaison
+grid_rf = GridSearchCV(
+    RandomForestClassifier(random_state=42), 
+    param_rf, 
+    scoring="f1", 
+    cv=3, 
+    n_jobs=-1
+)
+grid_rf.fit(X_train, y_train)
+
+# 7. Meilleur modèle
+best_rf = grid_rf.best_estimator_
+print("Random Forest entraînée avec GridSearch")
+print("Meilleurs paramètres :", grid_rf.best_params_)
+```
+### Prédictions et évaluation du modèle Random Forest
+
+Après avoir entraîné le modèle Random Forest avec GridSearchCV, on peut maintenant faire des prédictions et évaluer ses performances.
+
+```python
+# Prédictions sur l'ensemble de test
+y_pred = best_rf.predict(X_test)
+
+# Évaluation des performances
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+print(classification_report(y_test, y_pred))
+
+# Matrice de confusion
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt="d", cmap="Greens")
+plt.title("Matrice de confusion - Random Forest")
+plt.show()
+```
+<img src="Images/image6.png" width="400" style="display: block; margin: 0 auto;">
+<p style='text-align: center; font-style: italic; color: #7f8c8d;'>
+</p>
+
+### Courbe ROC - Random Forest
+
+La courbe ROC (Receiver Operating Characteristic) permet d'évaluer la capacité du modèle à distinguer les classes positives et négatives.
+
+```python
+# Probabilités pour la classe positive
+y_prob = best_rf.predict_proba(X_test)[:,1]
+
+# Calcul du ROC
+from sklearn.metrics import roc_curve, roc_auc_score
+import matplotlib.pyplot as plt
+
+fpr, tpr, _ = roc_curve(y_test, y_prob)
+roc_auc = roc_auc_score(y_test, y_prob)
+
+# Visualisation
+plt.figure(figsize=(7,5))
+plt.plot(fpr, tpr, label=f"AUC = {roc_auc:.2f}", color="green")
+plt.plot([0,1],[0,1], "k--")  # ligne diagonale pour un modèle aléatoire
+plt.xlabel("False Positive Rate (FPR)")
+plt.ylabel("True Positive Rate (TPR)")
+plt.title("Courbe ROC - Random Forest")
+plt.legend(loc="lower right")
+plt.show()
+```
+<img src="Images/image6.png" width="400" style="display: block; margin: 0 auto;">
+<p style='text-align: center; font-style: italic; color: #7f8c8d;'>
+</p>
