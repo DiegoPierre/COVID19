@@ -450,6 +450,6 @@ plt.title("Courbe ROC - Random Forest")
 plt.legend(loc="lower right")
 plt.show()
 ```
-<img src="Images/image6.png" width="400" style="display: block; margin: 0 auto;">
+<img src="Images/image7.png" width="400" style="display: block; margin: 0 auto;">
 <p style='text-align: center; font-style: italic; color: #7f8c8d;'>
 </p>
