@@ -515,7 +515,8 @@ Pour aller plus loin et améliorer l’analyse et la prédiction des périodes �
 
 
 </p>
-#### Email:septamalouison634@gmail.com
+
+#### Email septamalouison634@gmail.com
 
 #### Lien Linkedlin www.linkedin.com/in/septama-louison-03335a31a
  
